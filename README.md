@@ -44,3 +44,13 @@
    ```bash
    make run
    ```
+
+## Swagger API Docs
+
+after running the server, go to
+
+```
+http://localhost:8080/swagger/index.html
+```
+
+

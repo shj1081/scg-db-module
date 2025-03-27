@@ -8,10 +8,18 @@ import (
 	"scg-inouse-db-module/internal/debug"
 	"scg-inouse-db-module/internal/handlers"
 
+	_ "scg-inouse-db-module/docs" // swagger docs 자동생성된 파일을 import
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @title SCG Inouse DB Module API
+// @version 1.0
+// @description This is a database management service API
+// @host localhost:8080
+// @BasePath /api
 func main() {
 
 	// load env variables and config
@@ -69,6 +77,11 @@ func main() {
 	// // 정적 파일 서빙
 	// fileServer := http.FileServer(http.Dir("./downloads/"))
 	// r.Handle("/downloads/*", http.StripPrefix("/downloads/", fileServer))
+
+	// Swagger UI endpoint
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger/doc.json"), // swagger JSON 파일의 URL
+	))
 
 	log.Println("Server running on ", config.AppConfig.Server.Port)
 	if err := http.ListenAndServe(":"+config.AppConfig.Server.Port, r); err != nil {

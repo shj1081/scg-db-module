@@ -11,25 +11,42 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// list all databases
+// ListDatabasesHandler godoc
+// @Summary List all databases
+// @Description Get a list of all available databases
+// @Tags databases
+// @Accept json
+// @Produce json
+// @Success 200 {object} BaseResponse{data=DatabaseListData}
+// @Failure 500 {object} ErrorResponse
+// @Router /databases [get]
 func ListDatabasesHandler(w http.ResponseWriter, r *http.Request) {
 	var databases []string
 	if err := db.DB.Select(&databases, "SHOW DATABASES"); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to list databases")
 		return
 	}
-	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"status":    "success",
-		"databases": databases,
+	utils.RespondWithJSON(w, http.StatusOK, BaseResponse{
+		Status: "success",
+		Data: DatabaseListData{
+			Databases: databases,
+		},
 	})
 }
 
-// create a new database
+// CreateDatabaseHandler godoc
+// @Summary Create a new database
+// @Description Create a new database with the given name
+// @Tags databases
+// @Accept json
+// @Produce json
+// @Param request body CreateDatabaseRequest true "Database creation request"
+// @Success 201 {object} BaseResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /databases [post]
 func CreateDatabaseHandler(w http.ResponseWriter, r *http.Request) {
-	type request struct {
-		Name string `json:"name"`
-	}
-	var req request
+	var req CreateDatabaseRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Malformed JSON")
 		return
@@ -39,13 +56,23 @@ func CreateDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to create database")
 		return
 	}
-	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"status":  "success",
-		"message": "Database created successfully",
+	utils.RespondWithJSON(w, http.StatusCreated, BaseResponse{
+		Status:  "success",
+		Message: "Database created successfully",
 	})
 }
 
-// drop a database
+// DropDatabaseHandler godoc
+// @Summary Drop a database
+// @Description Drop a database with the given name
+// @Tags databases
+// @Accept json
+// @Produce json
+// @Param databaseName path string true "Database name"
+// @Success 200 {object} BaseResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /databases/{databaseName} [delete]
 func DropDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 	databaseName := chi.URLParam(r, "databaseName")
 	query := fmt.Sprintf("DROP DATABASE %s", databaseName)
@@ -53,8 +80,8 @@ func DropDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to drop database")
 		return
 	}
-	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
-		"status":  "success",
-		"message": "Database dropped successfully",
+	utils.RespondWithJSON(w, http.StatusOK, BaseResponse{
+		Status:  "success",
+		Message: "Database dropped successfully",
 	})
 }
