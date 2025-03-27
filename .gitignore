@@ -1,0 +1,6 @@
+# go
+*.env
+
+# build
+build/
+tmp/
