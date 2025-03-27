@@ -17,7 +17,7 @@ import (
 // @Tags databases
 // @Accept json
 // @Produce json
-// @Success 200 {object} BaseResponse{data=DatabaseListData}
+// @Success 200 {object} DatabaseListResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /databases [get]
 func ListDatabasesHandler(w http.ResponseWriter, r *http.Request) {
@@ -26,11 +26,9 @@ func ListDatabasesHandler(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to list databases")
 		return
 	}
-	utils.RespondWithJSON(w, http.StatusOK, BaseResponse{
-		Status: "success",
-		Data: DatabaseListData{
-			Databases: databases,
-		},
+	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"status":    "success",
+		"databases": databases,
 	})
 }
 
@@ -41,12 +39,17 @@ func ListDatabasesHandler(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body CreateDatabaseRequest true "Database creation request"
-// @Success 201 {object} BaseResponse
+// @Success 201 {object} CreateDatabaseResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /databases [post]
 func CreateDatabaseHandler(w http.ResponseWriter, r *http.Request) {
-	var req CreateDatabaseRequest
+
+	// TODO: determine whether to use swagger-dto or not
+	type request struct {
+		Name string `json:"name"`
+	}
+	var req request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Malformed JSON")
 		return
@@ -56,9 +59,9 @@ func CreateDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to create database")
 		return
 	}
-	utils.RespondWithJSON(w, http.StatusCreated, BaseResponse{
-		Status:  "success",
-		Message: "Database created successfully",
+	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"status":  "success",
+		"message": "Database created successfully",
 	})
 }
 
@@ -69,10 +72,11 @@ func CreateDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param databaseName path string true "Database name"
-// @Success 200 {object} BaseResponse
+// @Success 200 {object} DropDatabaseResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /databases/{databaseName} [delete]
+// TODO: only for scg_admin role
 func DropDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 	databaseName := chi.URLParam(r, "databaseName")
 	query := fmt.Sprintf("DROP DATABASE %s", databaseName)
@@ -80,8 +84,8 @@ func DropDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to drop database")
 		return
 	}
-	utils.RespondWithJSON(w, http.StatusOK, BaseResponse{
-		Status:  "success",
-		Message: "Database dropped successfully",
+	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"status":  "success",
+		"message": "Database dropped successfully",
 	})
 }
