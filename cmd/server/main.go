@@ -6,6 +6,7 @@ import (
 	"scg-inouse-db-module/internal/config"
 	"scg-inouse-db-module/internal/db"
 	"scg-inouse-db-module/internal/debug"
+	"scg-inouse-db-module/internal/handlers"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -33,13 +34,14 @@ func main() {
 	r.Use(middleware.Logger)    // reuqest logging
 	r.Use(middleware.Recoverer) // panic handling
 
-	// // API 라우트 그룹
-	// r.Route("/api", func(r chi.Router) {
-	// 	// 데이터베이스 관련 엔드포인트
-	// 	r.Get("/databases", handlers.ListDatabasesHandler)
-	// 	r.Post("/databases", handlers.CreateDatabaseHandler)
-	// 	r.Delete("/databases/{databaseName}", handlers.DropDatabaseHandler)
+	// API routes group
+	r.Route("/api", func(r chi.Router) {
 
+		// database related endpoints
+		r.Get("/databases", handlers.ListDatabasesHandler)
+		r.Post("/databases", handlers.CreateDatabaseHandler)
+		r.Delete("/databases/{databaseName}", handlers.DropDatabaseHandler)
+	})
 	// 	// 테이블 관련 엔드포인트
 	// 	r.Get("/databases/{databaseName}/tables", handlers.ListTablesHandler)
 	// 	r.Post("/databases/{databaseName}/tables", handlers.CreateTableHandler)

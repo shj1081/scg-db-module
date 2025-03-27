@@ -1,18 +1,18 @@
 package db
 
 import (
-	"database/sql"
 	"scg-inouse-db-module/internal/config"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 )
 
-var DB *sql.DB
+var DB *sqlx.DB
 
 // initializes the global DB connection.
 func InitDB(dsn string) error {
 	var err error
-	DB, err = sql.Open("mysql", dsn)
+	DB, err = sqlx.Open("mysql", dsn)
 	if err != nil {
 		return err
 	}
