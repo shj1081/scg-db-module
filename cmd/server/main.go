@@ -8,7 +8,7 @@ import (
 	"scg-inouse-db-module/internal/debug"
 	"scg-inouse-db-module/internal/handlers"
 
-	_ "scg-inouse-db-module/docs" // swagger docs 자동생성된 파일을 import
+	_ "scg-inouse-db-module/docs" // swagger auto generated files
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -49,12 +49,15 @@ func main() {
 		r.Get("/databases", handlers.ListDatabasesHandler)
 		r.Post("/databases", handlers.CreateDatabaseHandler)
 		r.Delete("/databases/{databaseName}", handlers.DropDatabaseHandler)
+
+		// table related endpoints
+		r.Get("/databases/{databaseName}/tables", handlers.ListTablesHandler)
+		r.Get("/databases/{databaseName}/tables/{tableName}/schema", handlers.GetTableSchemaHandler)
+
+		// TODO: should these endpoints be implemented in db module?
+		// 	r.Post("/databases/{databaseName}/tables", handlers.CreateTableHandler)
+		// 	r.Delete("/databases/{databaseName}/tables/{tableName}", handlers.DropTableHandler)
 	})
-	// 	// 테이블 관련 엔드포인트
-	// 	r.Get("/databases/{databaseName}/tables", handlers.ListTablesHandler)
-	// 	r.Post("/databases/{databaseName}/tables", handlers.CreateTableHandler)
-	// 	r.Delete("/databases/{databaseName}/tables/{tableName}", handlers.DropTableHandler)
-	// 	r.Get("/databases/{databaseName}/tables/{tableName}/schema", handlers.GetTableSchemaHandler)
 
 	// 	// 쿼리 관련 엔드포인트
 	// 	r.Post("/databases/{databaseName}/query", handlers.RawQueryHandler)

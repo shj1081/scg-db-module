@@ -18,7 +18,7 @@ type CreateDatabaseRequest struct {
 // DatabaseListResponse represents the response for listing databases
 type DatabaseListResponse struct {
 	Status    string   `json:"status" example:"success"`
-	Databases []string `json:"databases" example:"[\"database1\",\"database2\"]"`
+	Databases []string `json:"databases"`
 }
 
 // CreateDatabaseResponse represents the response for database creation
@@ -31,4 +31,16 @@ type CreateDatabaseResponse struct {
 type DropDatabaseResponse struct {
 	Status  string `json:"status" example:"success"`
 	Message string `json:"message" example:"Database dropped successfully"`
+}
+
+// TableListResponse represents the response for listing tables
+type TableListResponse struct {
+	Status string      `json:"status" example:"success"`
+	Tables []TableInfo `json:"tables"`
+}
+
+// TableSchemaResponse represents the response for table schema
+type TableSchemaResponse struct {
+	Status string       `json:"status" example:"success"`
+	Schema []ColumnInfo `json:"schema"`
 }

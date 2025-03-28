@@ -17,7 +17,7 @@ import (
 // @Tags databases
 // @Accept json
 // @Produce json
-// @Success 200 {object} DatabaseListResponse
+// @Success 200 {object} DatabaseListResponse "status:success, databases:[]string"
 // @Failure 500 {object} ErrorResponse
 // @Router /databases [get]
 func ListDatabasesHandler(w http.ResponseWriter, r *http.Request) {
