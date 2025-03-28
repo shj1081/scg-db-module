@@ -44,3 +44,11 @@ type TableSchemaResponse struct {
 	Status string       `json:"status" example:"success"`
 	Schema []ColumnInfo `json:"schema"`
 }
+
+// TableDataResponse represents the response for table data
+// BUG: wrong swagger docs example
+type TableDataResponse struct {
+	Status  string                   `json:"status" example:"success"`
+	Columns []string                 `json:"columns"`
+	Rows    []map[string]interface{} `json:"rows"`
+}

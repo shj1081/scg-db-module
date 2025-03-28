@@ -101,6 +101,7 @@ func GetTableSchemaHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get table schema
+	// TODO: should be determine whether to use plain schema line or json structured schema object
 	query := fmt.Sprintf(`
 		SELECT 
 			c.COLUMN_NAME,
@@ -175,5 +176,88 @@ func GetTableSchemaHandler(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"status":  "success",
 		"columns": columns,
+	})
+}
+
+// GetTableHandler godoc
+// @Summary Get table data
+// @Description Get all data from a specific table in a database
+// @Tags tables
+// @Accept json
+// @Produce json
+// @Param databaseName path string true "Database name"
+// @Param tableName path string true "Table name"
+// @Success 200 {object} TableDataResponse "status:success, columns:[]string, rows:[]map[string]interface{}"
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /databases/{databaseName}/tables/{tableName} [get]
+func GetTableHandler(w http.ResponseWriter, r *http.Request) {
+	databaseName := chi.URLParam(r, "databaseName")
+	tableName := chi.URLParam(r, "tableName")
+
+	// check table exists
+	checkQuery := `
+		SELECT COUNT(*) 
+		FROM information_schema.tables 
+		WHERE table_schema = ? AND table_name = ?`
+	var count int
+	if err := db.DB.QueryRow(checkQuery, databaseName, tableName).Scan(&count); err != nil || count == 0 {
+		utils.RespondWithError(w, http.StatusNotFound, "Table not found")
+		return
+	}
+
+	// get table data
+	query := fmt.Sprintf("SELECT * FROM `%s`.`%s`", databaseName, tableName)
+	rows, err := db.DB.Query(query)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to get table data")
+		return
+	}
+	defer rows.Close()
+
+	// get column names
+	columns, err := rows.Columns()
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, "Failed to get column names")
+		return
+	}
+
+	// collect data
+	var resultRows []map[string]interface{}
+	for rows.Next() {
+		values := make([]interface{}, len(columns))
+		valuePtrs := make([]interface{}, len(columns))
+		for i := range values {
+			valuePtrs[i] = &values[i]
+		}
+
+		if err := rows.Scan(valuePtrs...); err != nil {
+			utils.RespondWithError(w, http.StatusInternalServerError, "Error scanning row")
+			return
+		}
+
+		row := make(map[string]interface{})
+		for i, col := range columns {
+			var val interface{}
+			raw := values[i]
+
+			// mysql driver returns []byte for strings, convert to string
+			b, ok := raw.([]byte)
+			if ok {
+				val = string(b)
+			} else {
+				val = raw
+			}
+			row[col] = val
+		}
+
+		resultRows = append(resultRows, row)
+	}
+
+	// return response
+	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"status":  "success",
+		"columns": columns,
+		"rows":    resultRows,
 	})
 }

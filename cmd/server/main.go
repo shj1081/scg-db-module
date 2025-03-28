@@ -53,6 +53,7 @@ func main() {
 
 		// table related endpoints
 		r.Get("/databases/{databaseName}/tables", handlers.ListTablesHandler)
+		r.Get("/databases/{databaseName}/tables/{tableName}", handlers.GetTableHandler)
 		r.Get("/databases/{databaseName}/tables/{tableName}/schema", handlers.GetTableSchemaHandler)
 
 		// TODO: should these endpoints be implemented in db module?
