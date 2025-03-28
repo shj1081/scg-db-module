@@ -101,24 +101,4 @@ func validateConfig() {
 	}
 
 	log.Println("Config loaded successfully")
-
-	// test config print
-	log.Printf("AppConfig: \n"+
-		"  DB: \n"+
-		"    DSN: %s\n"+
-		"    MaxOpenConns: %d\n"+
-		"    MaxIdleConns: %d\n"+
-		"    ConnMaxLifetime: %s\n"+
-		"  Server: \n"+
-		"    Port: %s\n"+
-		"    Environment: %s\n"+
-		"  Auth: \n"+
-		"    ProxyURL: %s\n",
-		AppConfig.DB.DSN,
-		AppConfig.DB.MaxOpenConns,
-		AppConfig.DB.MaxIdleConns,
-		AppConfig.DB.ConnMaxLifetime,
-		AppConfig.Server.Port,
-		AppConfig.Server.Environment,
-		AppConfig.Auth.ProxyURL)
 }

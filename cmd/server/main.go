@@ -33,6 +33,7 @@ func main() {
 	defer db.CloseDB()
 
 	// TODO: remove this
+	debug.PrintConfig(config.AppConfig)
 	debug.PrintDBTest(db.DB)
 
 	// chi router setup

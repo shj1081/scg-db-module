@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"scg-inouse-db-module/internal/config"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -19,4 +21,26 @@ func PrintDBTest(db *sqlx.DB) {
 	for _, dbName := range databases {
 		fmt.Println(dbName)
 	}
+}
+
+// PrintConfig prints the current application configuration
+func PrintConfig(cfg *config.Config) {
+	log.Printf("AppConfig: \n"+
+		"  DB: \n"+
+		"    DSN: %s\n"+
+		"    MaxOpenConns: %d\n"+
+		"    MaxIdleConns: %d\n"+
+		"    ConnMaxLifetime: %s\n"+
+		"  Server: \n"+
+		"    Port: %s\n"+
+		"    Environment: %s\n"+
+		"  Auth: \n"+
+		"    ProxyURL: %s\n",
+		cfg.DB.DSN,
+		cfg.DB.MaxOpenConns,
+		cfg.DB.MaxIdleConns,
+		cfg.DB.ConnMaxLifetime,
+		cfg.Server.Port,
+		cfg.Server.Environment,
+		cfg.Auth.ProxyURL)
 }
