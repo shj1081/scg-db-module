@@ -9,7 +9,7 @@ swagger:
 
 .PHONY: clean
 clean:
-	rm -rf build/ tmp/ docs/
+	rm -rf build/ tmp/
 
 .PHONY: build
 build: setup swagger

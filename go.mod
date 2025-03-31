@@ -9,6 +9,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/swaggo/http-swagger v1.3.4
 	github.com/swaggo/swag v1.16.4
+	github.com/xwb1989/sqlparser v0.0.0-20180606152119-120387863bf2
 )
 
 require (

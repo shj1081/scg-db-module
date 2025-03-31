@@ -59,6 +59,9 @@ func main() {
 		// TODO: should these endpoints be implemented in db module?
 		// 	r.Post("/databases/{databaseName}/tables", handlers.CreateTableHandler)
 		// 	r.Delete("/databases/{databaseName}/tables/{tableName}", handlers.DropTableHandler)
+
+		// query related endpoints
+		r.Post("/databases/{databaseName}/query", handlers.RawQueryHandler)
 	})
 
 	// 	// 쿼리 관련 엔드포인트
