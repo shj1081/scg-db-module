@@ -1,4 +1,4 @@
-# SCG In-house DB Module with Golang
+# DB Module with Golang
 
 ## Prerequisites
 - Go 1.21 or higher
